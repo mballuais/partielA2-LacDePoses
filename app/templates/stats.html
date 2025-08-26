@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-bar"></i> Tableau de Bord - Statistiques</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h3>{{ total_materials }}</h3>
+                        <p class="mb-0">Matériels</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-tools fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h3>{{ total_orders }}</h3>
+                        <p class="mb-0">Commandes</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-shopping-cart fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h3>{{ "%.2f"|format(total_revenue) }}€</h3>
+                        <p class="mb-0">Chiffre d'Affaires</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-euro-sign fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        {% if most_rented %}
+                        <h6>{{ most_rented[0] }}</h6>
+                        <small>{{ most_rented[1] }} fois loué</small>
+                        {% else %}
+                        <h6>Aucun</h6>
+                        <small>Pas encore de location</small>
+                        {% endif %}
+                        <p class="mb-0 mt-1">Top Matériel</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-crown fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Informations Système</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="fas fa-check-circle text-success"></i> Framework</span>
+                        <strong>Flask + SQLAlchemy</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="fas fa-database text-primary"></i> Base de données</span>
+                        <strong>SQLite avec migrations</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="fas fa-shield-alt text-warning"></i> Gestion erreurs</span>
+                        <strong>Complète</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><i class="fas fa-mobile-alt text-info"></i> Interface</span>
+                        <strong>Bootstrap 5 + FontAwesome</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-tasks"></i> Fonctionnalités Réalisées</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="fas fa-check text-success"></i> Ajout/Modification matériel
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check text-success"></i> Création de commandes
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check text-success"></i> Gestion des stocks
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check text-success"></i> Restitution automatique
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-check text-success"></i> Calcul prix automatique
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-plus text-primary"></i> <em>Recherche temps réel</em>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-plus text-primary"></i> <em>Suppression items commande</em>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-plus text-primary"></i> <em>Statistiques dashboard</em>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

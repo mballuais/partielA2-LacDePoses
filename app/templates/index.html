@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Header avec info du parc -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-primary border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="text-white">
+                <h1 class="h3 mb-2">
+                    <i class="fas fa-water"></i> Parc d'Activité du Lac de Poses
+                </h1>
+                <p class="mb-0">
+                    <i class="fas fa-map-marker-alt"></i> Système de gestion de location de matériel
+                    <span class="ms-3"><i class="fas fa-phone"></i> Gérant connecté</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h2><i class="fas fa-tools"></i> Liste du Matériel</h2>
+        
+        <!-- Barre de recherche -->
+        <div class="mb-3">
+            <input type="text" id="searchMaterial" class="form-control" placeholder="🔍 Rechercher un matériel...">
+        </div>
+        
+        {% if materials %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-tag"></i> Nom</th>
+                            <th><i class="fas fa-boxes"></i> Quantité Disponible</th>
+                            <th><i class="fas fa-euro-sign"></i> Prix Location</th>
+                            <th><i class="fas fa-cogs"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for material in materials %}
+                        <tr>
+                            <td>{{ material.name }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if material.available_quantity > 0 else 'danger' }}">
+                                    {{ material.available_quantity }}
+                                </span>
+                            </td>
+                            <td>{{ "%.2f"|format(material.rental_price) }} €</td>
+                            <td>
+                                <a href="{{ url_for('main.edit_material', id=material.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                   <i class="fas fa-edit"></i> Modifier
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <h4>Aucun matériel disponible</h4>
+                <p>Commencez par <a href="{{ url_for('main.add_material') }}">ajouter du matériel</a>.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <h2><i class="fas fa-clipboard-list"></i> Commandes en cours</h2>
+        {% if orders %}
+            {% for order in orders %}
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between">
+                    <strong><i class="fas fa-user"></i> {{ order.customer_name }}</strong>
+                    <span class="badge bg-primary">{{ "%.2f"|format(order.total_price) }} €</span>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted"><i class="fas fa-hashtag"></i> Commande #{{ order.id }}</small>
+                    
+                    {% if order.items %}
+                    <div class="mt-2">
+                        <h6><i class="fas fa-list-ul"></i> Matériel loué :</h6>
+                        <ul class="list-unstyled mb-2">
+                            {% for item in order.items %}
+                            <li class="small">
+                                • {{ item.quantity }}x {{ item.material.name }} 
+                                <span class="text-muted">({{ "%.2f"|format(item.unit_price) }}€/u)</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('main.add_to_order', order_id=order.id) }}" 
+                           class="btn btn-sm btn-outline-primary">
+                           <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <button type="button" class="btn btn-sm btn-success" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#returnModal{{ order.id }}">
+                            <i class="fas fa-undo"></i> Rendre
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Modals de confirmation -->
+            {% for order in orders %}
+            <div class="modal fade" id="returnModal{{ order.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-undo"></i> Rendre la commande</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir rendre la commande de <strong>{{ order.customer_name }}</strong> ?</p>
+                            <ul>
+                                {% for item in order.items %}
+                                <li>{{ item.quantity }}x {{ item.material.name }}</li>
+                                {% endfor %}
+                            </ul>
+                            <p><strong>Total : {{ "%.2f"|format(order.total_price) }} €</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i> Annuler
+                            </button>
+                            <a href="{{ url_for('main.return_order', order_id=order.id) }}" 
+                               class="btn btn-success">
+                                <i class="fas fa-check"></i> Confirmer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <p>Aucune commande en cours</p>
+                <a href="{{ url_for('main.create_order') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Créer une commande
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.getElementById('searchMaterial').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+        const materialName = row.querySelector('td:first-child').textContent.toLowerCase();
+        row.style.display = materialName.includes(searchTerm) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}
