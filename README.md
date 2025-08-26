@@ -21,7 +21,7 @@ Application web de gestion de location de matériel développée avec Flask.
 
 1. **Cloner et accéder au projet**
 ```bash
-git clone <votre-repo>
+git clone https://github.com/mballuais/partielA2-LacDePoses.git
 cd location-materiel
 ```
 
